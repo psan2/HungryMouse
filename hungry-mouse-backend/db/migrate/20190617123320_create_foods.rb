@@ -1,9 +1,9 @@
 class CreateFoods < ActiveRecord::Migration[5.2]
   def change
     create_table :foods do |t|
-      t.string :match_id
+      t.references :match
       t.string :name
-      t.integer :length
+      t.integer :item_length
       t.timestamps
     end
   end
