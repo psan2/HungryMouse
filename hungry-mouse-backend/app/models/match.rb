@@ -3,6 +3,7 @@ class Match < ApplicationRecord
     belongs_to :game
     has_many :foods
     has_many :bites
+    has_many :food_grids, through: :foods
 
     def other_matches( this_match=self )
         this_match.game.matches.select {|match|match.id!=this_match.id}.each {|current_match| }
@@ -81,12 +82,12 @@ class Match < ApplicationRecord
                other_foodgrid.food.save
 
              # So if the food is eaten, see if there are any other uneaten foods for any other players in the game
-                 if other_match.foods.select {|f| f.eaten==false }.length==0
-                     # This match is a loser ..... we can't say we are a winner just yet, as there may be more than 2 players
+                 if other_match.food_grids.select {|f| f.bite==false }.length==0
+                # This match is a loser ..... we can't say we are a winner just yet, as there may be more than 2 players
                      other_match.loser=true;
                      other_match.save
                      # As we have set a player to being a loser, now is a good time to see if we are a winner
-                     nibble_hash[:won]=winner?( this_match )
+                     nibble_hash[:won] = winner?( this_match )
                  end # End the setting this player a loser stuff
  
             end # End the setting the food element to eaten

@@ -69,12 +69,12 @@ function bite(matchId, xPos, yPos ) {
 
 // Lets simulate a game
 initGame(1,5,5)
-setFood(1, 1, 1, false)
-setFood(2, 1, 1, true)
-setFood(3, 1, 1, false)
-setFood(4, 1, 1, true)
-bite(2,1,1)
-bite(2,2,1)
-bite(2,3,1)
+.then( () => setFood(2, 1, 1, false))
+.then( () => setFood(4, 1, 1, true))
+.then( () => bite(2,1,1))
+.then( () => bite(2,2,1))
+.then( () => bite(2,3,1))
+
+
 // The computers horizontal food item should be eaten, the other nibbled
 

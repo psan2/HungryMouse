@@ -30,6 +30,27 @@ class Game < ApplicationRecord
             match.bites.destroy_all
             match.save;
         }
+
+# Now position each AI players pieces, randomly
+        ai_food.each { |food| 
+            food.vertical=rand(2);
+            if food.vertical
+                x_range=self.qty_columns
+                y_range=self.qty_rows-food.item_length
+            else
+                x_range=self.qty_columns-food.item_length
+                y_range=self.qty_rows
+            end
+            food.x_pos=rand(x_range)
+            food.y_pos=rand(y_range)
+            food.save
+            food.position
+        }
+
+    end
+
+    def ai_food 
+        self.foods.select {|f| f.player.ai==true}
     end
 
     def winners
@@ -65,7 +86,8 @@ class Game < ApplicationRecord
                 positioned=true
             end
 
-            return_array << {food:food.name,
+            return_array << {food_id:food.id,
+                    food:food.name,
                     length:food.item_length,
                     eaten:food.eaten,
                     positioned:positioned,
