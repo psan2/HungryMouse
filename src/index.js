@@ -1,9 +1,10 @@
 const BASE_URL = "http://localhost:3000";
 const GRID_URL = `${BASE_URL}/grid`;
 const FOOD_URL = `${BASE_URL}/food`;
-const MATCH_URL = `${BASE_URL}/match`;
+const MATCH_URL = `${BASE_URL}/matches`;
 const gameBoard = document.querySelector("#game-grid");
 const body = document.querySelector("body");
+let matchInfo;
 let foods;
 let foodCounter = 0;
 
@@ -14,20 +15,17 @@ function fetchGrid() {
 }
 
 function generateRows(gridArray) {
-  for (let y = 0; y < gridArray.length; y++) {
+  for (let y_pos = 0; y_pos < gridArray.length; y_pos++) {
     const tr = document.createElement("tr");
-    tr.id = `r${y + 1}`;
+    tr.id = `r${y_pos + 1}`;
     gameBoard.appendChild(tr);
-    for (let x = 0; x < gridArray[y].length; x++) {
+    for (let x_pos = 0; x_pos < gridArray[y_pos].length; x_pos++) {
       const td = document.createElement("td");
-      td.dataset.y = `${y + 1}`;
-      td.dataset.x = `${x + 1}`;
+      td.dataset.y_pos = `${y_pos + 1}`;
+      td.dataset.x_pos = `${x_pos + 1}`;
       td.className = "grid-square";
       td.height = "25px";
       td.width = "25px";
-      // td.addEventListener("click", () =>
-      //   alert(`You sunk my battleship! ${td.dataset.gridLocation}`)
-      // );
       tr.appendChild(td);
     }
   }
@@ -42,18 +40,19 @@ function generateRows(gridArray) {
 function startGame(e) {
   e.preventDefault();
   document.querySelector("#start-button").remove();
-  fetchFood();
+  fetchMatch();
 }
 
-function fetchFood() {
-  fetch(FOOD_URL)
+function fetchMatch() {
+  fetch(MATCH_URL)
     .then(resp => resp.json())
-    .then(foodArray => (foods = foodArray))
+    .then(matchJson => (matchInfo = matchJson))
     .then(() => placementState());
 }
 
 function placementState() {
-  if (foods[foods.length - 1].x == null) {
+  foods = matchInfo.food;
+  if (foods[foods.length - 1].x_pos == null) {
     const currentFood = foods[foodCounter];
     placeFood(currentFood);
   } else {
@@ -70,10 +69,9 @@ function placeFood(currentFood) {
 
 function addFoodToSquare(e, currentFood) {
   const clickedSquare = e.target;
-  currentFood.x = clickedSquare.dataset.x;
-  currentFood.y = clickedSquare.dataset.y;
+  currentFood.x_pos = clickedSquare.dataset.x_pos;
+  currentFood.y_pos = clickedSquare.dataset.y_pos;
 
-  debugger;
   const options = {
     method: "PATCH",
     headers: {
@@ -81,13 +79,20 @@ function addFoodToSquare(e, currentFood) {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      id:
+      food_id: currentFood.id,
+      x_pos: currentFood.x_pos,
+      y_pos: currentFood.y_pos,
+      vertical: currentFood.vertical
     })
   };
 
-  return fetch(PUPS_URL + `/${id}`, options).then(() =>
-    goodBadDogButton(state)
-  );
+  fetch(MATCH_URL, options)
+    .then(resp => resp.json())
+    .then(foodGridSquares => renderFoodGrid(foodGridSquares)); //need to re-connect the response to the function
+}
+
+function renderFoodGrids(foodGridSquares) {
+  //need to re-add args to this function
 }
 
 function init() {
