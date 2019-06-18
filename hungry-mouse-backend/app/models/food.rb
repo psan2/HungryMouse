@@ -4,7 +4,8 @@ class Food < ApplicationRecord
     has_one :game, through: :match
     has_many :food_grids
 
-    def set_position
+    # Call to solidify the position of the food item, creating the grid that can get eaten
+    def position
         self.food_grids.destroy_all;
         return_array = [];
         x_position=x_pos 

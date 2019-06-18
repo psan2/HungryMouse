@@ -1,6 +1,6 @@
-class CreateShots < ActiveRecord::Migration[5.2]
+class CreateBites < ActiveRecord::Migration[5.2]
   def change
-    create_table :shots do |t|
+    create_table :bites do |t|
       t.references :match
       t.integer :x_pos
       t.integer :y_pos

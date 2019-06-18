@@ -7,14 +7,17 @@ class MatchesController < ApplicationController
     end
 
     def update
-
-        params[:foods].each do |food|
-            food=Food.find(food.id)
-            food.set_position(food)
-        end
-
-        render json: match,
-            include: [:foods]
+        # This will set the x and y positions of the food items and position them
+        # it will return 
+            food=Food.find(params[:food_id])
+            food.x_pos=params[:x_pos]
+            food.y_pos=params[:y_pos]
+            food.vertical=params[:vertical]
+            food.save
+            food.position
+            food.reload
+        render json: food.food_grids
+#            include: [:food_grids]
 
     end
 

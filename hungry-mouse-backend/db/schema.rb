@@ -15,11 +15,20 @@ ActiveRecord::Schema.define(version: 2019_06_18_072830) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "bites", force: :cascade do |t|
+    t.bigint "match_id"
+    t.integer "x_pos"
+    t.integer "y_pos"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["match_id"], name: "index_bites_on_match_id"
+  end
+
   create_table "food_grids", force: :cascade do |t|
     t.bigint "food_id"
     t.integer "x_pos"
     t.integer "y_pos"
-    t.boolean "nibble"
+    t.boolean "bite"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["food_id"], name: "index_food_grids_on_food_id"
@@ -62,15 +71,6 @@ ActiveRecord::Schema.define(version: 2019_06_18_072830) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "ai", default: false
-  end
-
-  create_table "shots", force: :cascade do |t|
-    t.bigint "match_id"
-    t.integer "x_pos"
-    t.integer "y_pos"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["match_id"], name: "index_shots_on_match_id"
   end
 
 end

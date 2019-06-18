@@ -4,7 +4,7 @@ class CreateFoodGrids < ActiveRecord::Migration[5.2]
       t.references :food
       t.integer :x_pos
       t.integer :y_pos
-      t.boolean :nibble
+      t.boolean :bite
       t.timestamps
     end
   end

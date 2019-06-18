@@ -1,2 +1,0 @@
-class Shot < ApplicationRecord
-end
