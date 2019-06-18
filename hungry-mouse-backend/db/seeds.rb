@@ -5,10 +5,15 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+Player.destroy_all
+Game.destroy_all
+Match.destroy_all
+Food.destroy_all
+
 computer = Player.create( name:"Computer", ai:true);
 player2 = Player.create( name:"2nd player");
 
-game = Game.create(qty_players:2,qty_columns:5,qty_rows:5);
+game = Game.create(qty_players:2,qty_columns:20,qty_rows:20);
 
 match1 = Match.create(player_id:computer.id, game_id:game.id);
 match2 = Match.create(player_id:player2.id, game_id:game.id);
