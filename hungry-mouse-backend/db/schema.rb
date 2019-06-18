@@ -10,27 +10,31 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_17_123838) do
+ActiveRecord::Schema.define(version: 2019_06_18_072830) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "food_grids", force: :cascade do |t|
-    t.bigint "grid_id"
     t.bigint "food_id"
+    t.integer "x_pos"
+    t.integer "y_pos"
     t.boolean "nibble"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["food_id"], name: "index_food_grids_on_food_id"
-    t.index ["grid_id"], name: "index_food_grids_on_grid_id"
   end
 
   create_table "foods", force: :cascade do |t|
     t.bigint "match_id"
     t.string "name"
     t.integer "item_length"
+    t.boolean "vertical"
+    t.integer "x_pos"
+    t.integer "y_pos"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "eaten", default: false
     t.index ["match_id"], name: "index_foods_on_match_id"
   end
 
@@ -42,20 +46,13 @@ ActiveRecord::Schema.define(version: 2019_06_17_123838) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "grids", force: :cascade do |t|
-    t.bigint "game_id"
-    t.integer "x_pos"
-    t.integer "y_pos"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["game_id"], name: "index_grids_on_game_id"
-  end
-
   create_table "matches", force: :cascade do |t|
     t.bigint "player_id"
     t.bigint "game_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "winner", default: false
+    t.integer "round_no", default: 1
     t.index ["game_id"], name: "index_matches_on_game_id"
     t.index ["player_id"], name: "index_matches_on_player_id"
   end
@@ -64,6 +61,16 @@ ActiveRecord::Schema.define(version: 2019_06_17_123838) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "ai", default: false
+  end
+
+  create_table "shots", force: :cascade do |t|
+    t.bigint "match_id"
+    t.integer "x_pos"
+    t.integer "y_pos"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["match_id"], name: "index_shots_on_match_id"
   end
 
 end

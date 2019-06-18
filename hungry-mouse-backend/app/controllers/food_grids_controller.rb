@@ -1,2 +1,0 @@
-class FoodGridsController < ApplicationController
-end
