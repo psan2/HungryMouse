@@ -5,7 +5,7 @@ class Game < ApplicationRecord
     has_many :foods, through: :matches
     has_many :food_grids, through: :foods
     has_many :bites, through: :matches
-        
+
     def initialise
 # Set the game up so a person can start positioning their items
 #   This means removing data from the shots table
@@ -13,7 +13,7 @@ class Game < ApplicationRecord
 
 
 #        set foods eaten to false  and remove the food grids
-        self.foods.each { |food|  
+        self.foods.each { |food|
             food.eaten=false;
             food.x_pos=nil,
             food.y_pos=nil,
@@ -23,10 +23,10 @@ class Game < ApplicationRecord
 
 #        set matches winner to false
 #        set matches round_no to 1
-        self.matches.each { |match| 
+        self.matches.each { |match|
             match.winner=false;
             match.loser=false;
-            match.round_no=1; 
+            match.round_no=1;
             match.bites.destroy_all
             match.save;
         }
@@ -36,16 +36,16 @@ class Game < ApplicationRecord
         matches.select {|match| match.winner==true}
     end
 
-    def losers 
+    def losers
         matches.select {|match| match.loser==true}
     end
 
-    def inplay 
+    def inplay
         matches.select {|match| match.loser==false && match.winner==false}
-    end 
+    end
 
     def player_hash( match )
-        
+
         player_hash={ player:match.player.name,
             round:match.round_no,
             bites:match.bites.length,
@@ -61,7 +61,7 @@ class Game < ApplicationRecord
 
             if food.x_pos==nil
                 positioned=false
-            else 
+            else
                 positioned=true
             end
 
