@@ -21,4 +21,13 @@ class MatchesController < ApplicationController
 
     end
 
+    def bite
+        match=Match.find(params[:match_id])
+        x_pos=params[:x_pos]
+        y_pos=params[:y_pos]
+        return_hash=match.bite(x_pos,y_pos)
+
+        render json: return_hash
+    end
+    
 end

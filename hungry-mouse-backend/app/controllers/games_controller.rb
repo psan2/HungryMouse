@@ -20,6 +20,6 @@ class GamesController < ApplicationController
         game.initialise;
         render json: game,
             include: [:matches, :players]
-    end   
+    end
   
 end
