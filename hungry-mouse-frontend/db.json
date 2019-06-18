@@ -21,38 +21,41 @@
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
   ],
-  "food": [
-    {
-      "id": 1,
-      "name": "Carrot",
-      "vertical": "false",
-      "length": "3",
-      "x": null,
-      "y": null
-    },
-    {
-      "id": 2,
-      "name": "Cheese",
-      "vertical": "false",
-      "length": "2",
-      "x": null,
-      "y": null
-    },
-    {
-      "id": 3,
-      "name": "Chocolate",
-      "vertical": "false",
-      "length": "4",
-      "x": null,
-      "y": null
-    },
-    {
-      "id": 4,
-      "name": "Cake",
-      "vertical": "false",
-      "length": "3",
-      "x": null,
-      "y": null
-    }
-  ]
+  "matches": {
+    "id": 1,
+    "food": [
+      {
+        "id": 1,
+        "name": "Carrot",
+        "vertical": "false",
+        "length": "3",
+        "x_pos": null,
+        "y_pos": null
+      },
+      {
+        "id": 2,
+        "name": "Cheese",
+        "vertical": "false",
+        "length": "2",
+        "x_pos": null,
+        "y_pos": null
+      },
+      {
+        "id": 3,
+        "name": "Chocolate",
+        "vertical": "false",
+        "length": "4",
+        "x_pos": null,
+        "y_pos": null
+      },
+      {
+        "id": 4,
+        "name": "Cake",
+        "vertical": "false",
+        "length": "3",
+        "x_pos": null,
+        "y_pos": null
+      }
+    ]
+  }
 }
