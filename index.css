@@ -6,4 +6,12 @@ table,
 th,
 td {
   border: 1px solid black;
+  margin-right: 10px;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 0.4fr 0.5fr;
+  grid-template-rows: 1fr;
+  grid-template-areas: ". .";
 }
