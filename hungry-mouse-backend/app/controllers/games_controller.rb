@@ -7,18 +7,19 @@ class GamesController < ApplicationController
 
     def show
         game = Game.find(params[:id] )
-        if game
-            render json: game
-        end
+        render json: game.status
+        #,
+         #   include: [ game.status]
     end
 
     def update
-        game.assign_attributes(student_params)
-        if game.valid?
-          game.save
-          render json: game
-        end
-    end
-   
+        game=Game.find(params[:game_id]);
+        game.qty_columns=params[:qty_columns]
+        game.qty_rows=params[:qty_rows]
+        game.save;
+        game.initialise;
+        render json: game,
+            include: [:matches, :players]
+    end   
   
 end
