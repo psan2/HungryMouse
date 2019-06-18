@@ -22,9 +22,37 @@
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
   ],
   "food": [
-    { "name": "Carrot", "vertical": "false", "length": "3" },
-    { "name": "Cheese", "vertical": "false", "length": "2" },
-    { "name": "Chocolate", "vertical": "false", "length": "4" },
-    { "name": "Cake", "vertical": "false", "length": "3" }
+    {
+      "id": 1,
+      "name": "Carrot",
+      "vertical": "false",
+      "length": "3",
+      "x": null,
+      "y": null
+    },
+    {
+      "id": 2,
+      "name": "Cheese",
+      "vertical": "false",
+      "length": "2",
+      "x": null,
+      "y": null
+    },
+    {
+      "id": 3,
+      "name": "Chocolate",
+      "vertical": "false",
+      "length": "4",
+      "x": null,
+      "y": null
+    },
+    {
+      "id": 4,
+      "name": "Cake",
+      "vertical": "false",
+      "length": "3",
+      "x": null,
+      "y": null
+    }
   ]
 }
