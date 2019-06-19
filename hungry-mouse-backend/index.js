@@ -1,4 +1,5 @@
 const MATCH_URL='http://localhost:3000/matches/1'
+const MATCHBITE_URL='http://localhost:3000/bite'
 const GAME_URL='http://localhost:3000/games/1'
 
 function setFood(foodId, xPos, yPos, verticalPos) {
@@ -42,9 +43,38 @@ function initGame(gameId, qtyColumns, qtyRows ) {
     .then( data => data.json())
     .then(currentGame => console.log(currentGame)
   );
+}
 
+function bite(matchId, xPos, yPos ) {
 
+    const options = {
+        method: "POST",
+        headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            match_id: matchId,
+            x_pos: xPos,
+            y_pos: yPos
+        })
+    };
+
+  return fetch(MATCHBITE_URL, options)
+    .then( data => data.json())
+    .then(currentGame => console.log(currentGame)
+  );
 }
 
 
+// Lets simulate a game
+initGame(1,5,5)
+.then( () => setFood(2, 1, 1, false))
+.then( () => setFood(4, 1, 1, true))
+.then( () => bite(2,1,1))
+.then( () => bite(2,2,1))
+.then( () => bite(2,3,1))
+
+
+// The computers horizontal food item should be eaten, the other nibbled
 
