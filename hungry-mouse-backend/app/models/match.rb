@@ -120,8 +120,7 @@ class Match < ApplicationRecord
     # Get all of the foods nibbled by the last bite, that we will loop over to build an array of potential shots
             other_matches.each {|other_match|
                 other_match.food_grids.where(["food_grids.x_pos=? and food_grids.y_pos=?",search_x, search_y]).each {|nibbled_food|
-                 nibbled_foods.each {|food| # For each nibbled food
-                  if !food.eaten # If not fully eaten
+                  if !nibbled_food.food.eaten # If not fully eaten
 # Superb!!! lets build a sample around this cell
 # if we assume this hit was 3.3, then good places are 2.3, 4.3, 3.2 or 3.4
 # if one of those was a hit, for this food, then we know the orientation, so only 2 choices
@@ -142,7 +141,7 @@ class Match < ApplicationRecord
                         while( continue_search )
                                 if self.bites.where(["x_pos=? and y_pos=?",search[:x], search[:y]]).length>0
                                 # We did bite here .... so see if this was a hit.
-                                    if food.food_grids.where(["food_grids.x_pos=? and food_grids.y_pos=?",search[:x], search[:y]]).length>0
+                                    if FoodGrid.where(["food_id= ? and x_pos=? and y_pos=?",nibbled_food.food_id, search[:x], search[:y]]).length>0
                                     # And that bite, was a nibble ... so we need to perform a shift and continue the loop
                                         search[:x]+=search[:x_shift]
                                         search[:y]+=search[:y_shift]
@@ -174,7 +173,6 @@ class Match < ApplicationRecord
                     }
                 end # End of check if there is some more to nibble
                     } # End nibbled food loop
-                } # End possible nibbled food loop
             } # End of other match loop
         end # End of the .. has there been a previous bite check
 
