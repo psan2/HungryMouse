@@ -16,7 +16,29 @@ td {
 
 .grid-container {
   display: grid;
-  grid-template-columns: 0.4fr 0.5fr;
-  grid-template-rows: 1fr;
+  grid-template-columns: 300px;
+  grid-template-rows: auto;
   grid-template-areas: ". .";
+}
+
+.user-placed {
+  background: blue;
+}
+
+.computer-bitten {
+  border: 3px solid red;
+  margin-right: 10px;
+}
+
+.user-bitten {
+  border: 3px solid green;
+  margin-right: 10px;
+}
+
+.computer-bitten-hit {
+  background: red;
+}
+
+.user-bitten-hit {
+  background: green;
 }

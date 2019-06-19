@@ -5,6 +5,8 @@ const MATCH_URL = `${BASE_URL}/matches/2`;
 const GAMEBOARD = document.querySelector("#game-grid");
 const BODY = document.querySelector("body");
 const SIDEBAR = document.querySelector("#sidebar");
+const ROW_COUNT = 10;
+const COL_COUNT = 10;
 
 let gameInfo;
 let playerMatchInfo;
@@ -17,8 +19,6 @@ document.addEventListener("DOMContentLoaded", init());
 //fetchGrid starts the game by PATCHing criteria for the grid to the DB - these values are hard coded but may be updated in the future
 //then passes the game object to generateRows
 function fetchGrid() {
-  const gridWidth = 20;
-  const gridLength = 20;
   const options = {
     method: "PATCH",
     headers: {
@@ -27,8 +27,8 @@ function fetchGrid() {
     },
     body: JSON.stringify({
       game_id: 1,
-      qty_columns: gridWidth,
-      qty_rows: gridLength
+      qty_columns: COL_COUNT,
+      qty_rows: ROW_COUNT
     })
   };
 
@@ -113,10 +113,10 @@ function sidebarCurrentFood() {
   table.dataset.name = currentFood.name;
 
   if (currentFood.vertical) {
-    for (let i = 0; i < currentFood.length; ++i) {
+    for (let i = 0; i < currentFood.item_length; ++i) {
       const tr = document.createElement("tr");
       const td = document.createElement("td");
-      td.style.backgroundColor = "blue";
+      td.className = "sidebar-grid user-placed";
       tr.appendChild(td);
       table.appendChild(tr);
     }
@@ -124,13 +124,28 @@ function sidebarCurrentFood() {
     const tr = document.createElement("tr");
     for (let i = 0; i < currentFood.item_length; ++i) {
       const td = document.createElement("td");
-      td.style.backgroundColor = "blue";
+      td.className = "sidebar-grid user-placed";
       tr.appendChild(td);
       table.appendChild(tr);
     }
   }
 
   SIDEBAR.appendChild(table);
+  const sidebarGrid = document.querySelectorAll(".sidebar-grid");
+  sidebarGrid.forEach(grid =>
+    grid.addEventListener("click", rotateSidebarGrid)
+  );
+
+  const em = document.createElement("EM");
+  em.textContent = "Click to rotate";
+  SIDEBAR.appendChild(em);
+}
+
+//rotates sidebar grid cheese
+function rotateSidebarGrid() {
+  currentFood.vertical = !currentFood.vertical;
+  SIDEBAR.innerHTML = "";
+  sidebarCurrentFood();
 }
 
 //addFoodToSquare takes an event from the placement listeners, if a food is vertical, then sends the starting location of the food back to the DB
@@ -174,7 +189,7 @@ function renderFoodGrids(foodGridSquares) {
       const targetSquare = document.querySelector(
         `[data-x_pos='${gridSquare.x_pos}'][data-y_pos='${gridSquare.y_pos}']`
       );
-      targetSquare.style.backgroundColor = "blue";
+      targetSquare.className = "user-placed";
     });
     removeGridListeners(addFoodToSquare);
     if (foodCounter >= foods.length - 1) {
@@ -194,6 +209,10 @@ function init() {
 }
 
 function gameState() {
+  const guide = document.createElement("span");
+  guide.textContent =
+    "Click anywhere to take a bite.\nThe computer will take it's turn immediately after";
+  SIDEBAR.appendChild(guide);
   addGridListeners(takeABite);
 }
 
@@ -217,5 +236,75 @@ function takeABite(e) {
 
   fetch(BITE_URL, options)
     .then(resp => resp.json())
-    .then(console.log);
+    .then(renderBites);
+}
+
+function renderBites(biteJson) {
+  const userBite = biteJson.this_shot;
+  const computerBites = biteJson.ai_shots;
+
+  console.log(userBite);
+  console.log(computerBites);
+
+  if (!userBite.won) {
+    renderUserBite(userBite);
+    renderMultComputerBites(computerBites);
+  } else {
+    endGame(userBite.player);
+  }
+}
+
+function renderUserBite(userBite) {
+  const userBiteSquare = document.querySelector(
+    `[data-x_pos='${userBite.x_pos}'][data-y_pos='${userBite.y_pos}']`
+  );
+
+  if (userBite.nibbled) {
+    userBiteSquare.className = "user-bitten-hit";
+  } else {
+    userBiteSquare.className = "user-bitten";
+  }
+}
+
+function renderMultComputerBites(computerBites) {
+  for (let i = 0; i < computerBites.length; i++) {
+    const computerBite = computerBites[i];
+    const computerBiteSquare = document.querySelector(
+      `[data-x_pos='${computerBite.x_pos}'][data-y_pos='${computerBite.y_pos}']`
+    );
+    if (computerBite.nibbled) {
+      computerBiteSquare.className = "computer-bitten-hit";
+    } else {
+      computerBiteSquare.className = "computer-bitten";
+    }
+    if (computerBite.won) {
+      endGame(computerBite.player);
+    }
+  }
+}
+
+function endGame(player) {
+  removeGridListeners(takeABite);
+  SIDEBAR.innerHTML = "";
+
+  const message = document.createElement("h2");
+  const winner = document.createElement("h2");
+  message.textContent = "GAME OVER";
+
+  if (player === "Computer") {
+    winner.textContent = "COMPUTER WINS";
+    winner.style.color = "red";
+    message.style.color = "red";
+  } else if (player === "2nd player") {
+    winner.textContent = "YOU WIN";
+    winner.style.color = "green";
+    message.style.color = "green";
+  }
+
+  SIDEBAR.appendChild(message);
+  SIDEBAR.appendChild(winner);
+
+  setInterval(function() {
+    winner.style.display = winner.style.display == "none" ? "" : "none";
+  }, 1000);
 }
