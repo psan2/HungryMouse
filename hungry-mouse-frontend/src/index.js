@@ -307,4 +307,8 @@ function endGame(player) {
   setInterval(function() {
     winner.style.display = winner.style.display == "none" ? "" : "none";
   }, 1000);
+
+  const button = document.createElement("button");
+  button.textContent = "Restart";
+  button.addEventListener("click", init());
 }
