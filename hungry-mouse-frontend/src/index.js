@@ -240,6 +240,7 @@ function takeABite(e) {
 }
 
 function renderBites(biteJson) {
+  debugger;
   const userBite = biteJson.this_shot;
   const computerBites = biteJson.ai_shots;
 
@@ -308,7 +309,8 @@ function endGame(player) {
     winner.style.display = winner.style.display == "none" ? "" : "none";
   }, 1000);
 
-  const button = document.createElement("button");
-  button.textContent = "Restart";
-  button.addEventListener("click", init());
+  const restart = document.createElement("button");
+  restart.textContent = "Restart";
+  restart.addEventListener("click", init());
+  body.appendChild(restart);
 }
