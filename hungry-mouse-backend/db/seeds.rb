@@ -22,3 +22,6 @@ food1 = Food.create(match_id:match1.id, name:"Big cheese", item_length:3);
 food2 = Food.create(match_id:match2.id, name:"Big cheese", item_length:3);
 food3 = Food.create(match_id:match1.id, name:"Small cheese", item_length:2);
 food4 = Food.create(match_id:match2.id, name:"Small cheese", item_length:2);
+
+food5 = Food.create(match_id:match1.id, name:"Blue cheese", item_length:4);
+food6 = Food.create(match_id:match2.id, name:"Blue cheese", item_length:4);
