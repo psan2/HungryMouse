@@ -9,6 +9,11 @@ td {
   margin-right: 10px;
 }
 
+td {
+  height: 25px;
+  width: 25px;
+}
+
 .grid-container {
   display: grid;
   grid-template-columns: 0.4fr 0.5fr;
