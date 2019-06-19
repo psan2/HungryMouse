@@ -68,7 +68,7 @@ function bite(matchId, xPos, yPos ) {
 
 
 // Lets simulate a game
-initGame(1,5,5)
+initGame(1,10,10)
 .then( () => setFood(2, 1, 1, false))
 .then( () => setFood(4, 1, 1, true))
 .then( () => bite(2,1,1))
