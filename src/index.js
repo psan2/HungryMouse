@@ -13,6 +13,8 @@ let playerMatchInfo;
 let foods;
 let foodCounter;
 let currentFood;
+let placementListener;
+let biteListener;
 
 document.addEventListener("DOMContentLoaded", init());
 
@@ -43,6 +45,11 @@ function generateRows(gameInfo) {
   for (let y_pos = 0; y_pos < gameInfo.qty_columns; y_pos++) {
     const tr = document.createElement("tr");
     tr.id = `r${y_pos + 1}`;
+
+    const rowNumber = document.createElement("td");
+    rowNumber.textContent = y_pos + 1;
+    tr.appendChild(rowNumber);
+
     GAMEBOARD.appendChild(tr);
     for (let x_pos = 0; x_pos < gameInfo.qty_rows; x_pos++) {
       const td = document.createElement("td");
@@ -51,6 +58,14 @@ function generateRows(gameInfo) {
       td.className = "grid-square";
       tr.appendChild(td);
     }
+  }
+  for (let num = 0; num <= gameInfo.qty_rows; num++) {
+    const colNumber = document.createElement("td");
+    if (num > 0) {
+      colNumber.textContent = num;
+    }
+    colNumber.style.textAlign = "center";
+    GAMEBOARD.appendChild(colNumber);
   }
 
   const start = document.createElement("button");
@@ -82,23 +97,29 @@ function placementState() {
   foods = matchInfo.foods;
   currentFood = foods[foodCounter];
   sidebarCurrentFood();
-  addGridListeners(addFoodToSquare);
+  addPlacementListener(addFoodToSquare);
 }
 
-//adds a specified event listener to all grid squares
-function addGridListeners(func) {
-  const squares = document.querySelectorAll(".grid-square");
-  squares.forEach(square => {
-    square.addEventListener("click", func);
-  });
+//adds a specified event listener to gameboard
+function addPlacementListener(func) {
+  placementListener = func;
+  GAMEBOARD.addEventListener("click", placementListener);
 }
 
-//removes a specified event listener from all grid squares
-function removeGridListeners(func) {
-  const squares = document.querySelectorAll(".grid-square");
-  squares.forEach(square => {
-    square.removeEventListener("click", func);
-  });
+//removes a specified event listener from gameboard
+function removePlacementListener() {
+  GAMEBOARD.removeEventListener("click", placementListener);
+}
+
+//adds a specified event listener to gameboard
+function addBiteListener(func) {
+  biteListener = func;
+  GAMEBOARD.addEventListener("click", biteListener);
+}
+
+//removes a specified event listener from gameboard
+function removeBiteListener() {
+  GAMEBOARD.removeEventListener("click", biteListener);
 }
 
 //sidebarCurrentFood is called after placement listeners are added to grid, to display the food you're currently placing
@@ -116,7 +137,7 @@ function sidebarCurrentFood() {
     for (let i = 0; i < currentFood.item_length; ++i) {
       const tr = document.createElement("tr");
       const td = document.createElement("td");
-      td.className = "sidebar-grid user-placed";
+      td.className = "grid-square sidebar-grid user-placed";
       tr.appendChild(td);
       table.appendChild(tr);
     }
@@ -124,7 +145,7 @@ function sidebarCurrentFood() {
     const tr = document.createElement("tr");
     for (let i = 0; i < currentFood.item_length; ++i) {
       const td = document.createElement("td");
-      td.className = "sidebar-grid user-placed";
+      td.className = "grid-square sidebar-grid user-placed";
       tr.appendChild(td);
       table.appendChild(tr);
     }
@@ -191,7 +212,7 @@ function renderFoodGrids(foodGridSquares) {
       );
       targetSquare.className = "user-placed";
     });
-    removeGridListeners(addFoodToSquare);
+    removePlacementListener();
     if (foodCounter >= foods.length - 1) {
       gameState();
     } else {
@@ -208,12 +229,18 @@ function init() {
   fetchGrid();
 }
 
+function reinit() {
+  GAMEBOARD.innerHTML = "";
+  document.querySelector("button").remove();
+  init();
+}
+
 function gameState() {
   const guide = document.createElement("span");
-  guide.textContent =
-    "Click anywhere to take a bite.\nThe computer will take it's turn immediately after";
+  guide.innerHTML =
+    "Click anywhere to take a bite.\n The computer will bite after!";
   SIDEBAR.appendChild(guide);
-  addGridListeners(takeABite);
+  addBiteListener(takeABite);
 }
 
 function takeABite(e) {
@@ -240,7 +267,6 @@ function takeABite(e) {
 }
 
 function renderBites(biteJson) {
-  debugger;
   const userBite = biteJson.this_shot;
   const computerBites = biteJson.ai_shots;
 
@@ -249,8 +275,11 @@ function renderBites(biteJson) {
 
   if (!userBite.won) {
     renderUserBite(userBite);
-    renderMultComputerBites(computerBites);
+    setTimeout(function() {
+      renderMultComputerBites(computerBites);
+    }, 500);
   } else {
+    renderUserBite(userBite);
     endGame(userBite.player);
   }
 }
@@ -261,9 +290,9 @@ function renderUserBite(userBite) {
   );
 
   if (userBite.nibbled) {
-    userBiteSquare.className = "user-bitten-hit";
+    userBiteSquare.className += " user-bitten-hit";
   } else {
-    userBiteSquare.className = "user-bitten";
+    userBiteSquare.className += " user-bitten";
   }
 }
 
@@ -276,7 +305,7 @@ function renderMultComputerBites(computerBites) {
     if (computerBite.nibbled) {
       computerBiteSquare.className = "computer-bitten-hit";
     } else {
-      computerBiteSquare.className = "computer-bitten";
+      computerBiteSquare.className += " computer-bitten";
     }
     if (computerBite.won) {
       endGame(computerBite.player);
@@ -285,7 +314,7 @@ function renderMultComputerBites(computerBites) {
 }
 
 function endGame(player) {
-  removeGridListeners(takeABite);
+  removeBiteListener(takeABite);
   SIDEBAR.innerHTML = "";
 
   const message = document.createElement("h2");
@@ -307,10 +336,10 @@ function endGame(player) {
 
   setInterval(function() {
     winner.style.display = winner.style.display == "none" ? "" : "none";
-  }, 1000);
+  }, 500);
 
   const restart = document.createElement("button");
   restart.textContent = "Restart";
-  restart.addEventListener("click", init());
-  body.appendChild(restart);
+  restart.addEventListener("click", () => reinit());
+  BODY.appendChild(restart);
 }

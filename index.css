@@ -2,14 +2,12 @@ table {
   border-collapse: collapse;
 }
 
-table,
-th,
-td {
-  border: 1px solid black;
+table {
   margin-right: 10px;
 }
 
-td {
+.grid-square {
+  border: 1px solid black;
   height: 25px;
   width: 25px;
 }
@@ -22,6 +20,7 @@ td {
 }
 
 .user-placed {
+  border: 1px solid black;
   background: blue;
 }
 
