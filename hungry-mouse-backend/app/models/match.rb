@@ -50,8 +50,7 @@ class Match < ApplicationRecord
 
 # TODO Generate x and y if 0 for the AI ..... need to turn into a function and be smart
         if x_pos==0 || y_pos==0
-            shot_array=suggested_shots
-            shot=shot_array.sample
+            shot=suggested_shots(this_match).sample
             x_pos=shot[:x]
             y_pos=shot[:y]
         end 
@@ -67,7 +66,7 @@ class Match < ApplicationRecord
                      } # Will be used to show what has happened
 
 # Create the bite record
-    thisbite = Bite.create(match_id:this_match.id, x_pos:x_pos, y_pos:y_pos)
+    thisbite = Bite.create(match_id:this_match.id, x_pos:x_pos, y_pos:y_pos, bite:false)
 
     other_matches(this_match).each { |other_match|   
         other_match.foods.each { |other_food|
@@ -75,6 +74,8 @@ class Match < ApplicationRecord
                 other_foodgrid.bite=true
                 nibble_hash[:nibbled]=true
                 other_foodgrid.save
+                thisbite.bite=true;
+                thisbite.save;
         # If no other bits to bite, then set the food item to eaten
             food_to_eat=FoodGrid.where(["food_id=? and bite = false ", other_foodgrid.food_id])
             if food_to_eat.length==0 
@@ -104,21 +105,30 @@ class Match < ApplicationRecord
         nibble_hash
     end
 
-    def suggested_shots 
+    def successfullbites(this_match=self)
+        # Get all of the bites, linked to foods that are not eaten
+        # WORKTODO HERE ... NEED TO LIMIT TO UNEATEN FOODS
+        this_match.bites.select {|b| b.bite==true } # Get the last bite
+    end
+
+    def suggested_shots(this_match=self) 
 # Build an array of good shots, that can be sampled .... in theory this could be used 
 # as a help feature/function
 # 1) If the last bite, nibbled some cheese that isn't eaten surround that area
 # 2) Based upon the smallest cheese that still exists for other players, 
 #    build an array that covers the area best for horizontal and vertical placement
 #   return this for sampling
+
         return_array=[]
-        last_bite=self.bites.all.last # Get the last bite
-        search_x=last_bite.x_pos
-        search_y=last_bite.y_pos
+        last_bite=successfullbites(this_match).last # Get the last bite
+
+puts(last_bite)
 
         if last_bite # Just in case this is the 1st bite
+            search_x=last_bite.x_pos
+            search_y=last_bite.y_pos    
     # Get all of the foods nibbled by the last bite, that we will loop over to build an array of potential shots
-            other_matches.each {|other_match|
+            other_matches(this_match).each {|other_match|
                 other_match.food_grids.where(["food_grids.x_pos=? and food_grids.y_pos=?",search_x, search_y]).each {|nibbled_food|
                   if !nibbled_food.food.eaten # If not fully eaten
 # Superb!!! lets build a sample around this cell
@@ -139,8 +149,8 @@ class Match < ApplicationRecord
                         end
 
                         while( continue_search )
-                                if self.bites.where(["x_pos=? and y_pos=?",search[:x], search[:y]]).length>0
-                                # We did bite here .... so see if this was a hit.
+                                if this_match.bites.where(["x_pos=? and y_pos=?",search[:x], search[:y]]).length>0
+                                    # We did bite here .... so see if this was a hit.
                                     if FoodGrid.where(["food_id= ? and x_pos=? and y_pos=?",nibbled_food.food_id, search[:x], search[:y]]).length>0
                                     # And that bite, was a nibble ... so we need to perform a shift and continue the loop
                                         search[:x]+=search[:x_shift]
@@ -189,7 +199,7 @@ class Match < ApplicationRecord
                 search_x+=1
                 self.game.qty_rows.times do
                     search_y+= 1
-                    if self.bites.where(["x_pos=? and y_pos=?",search_x, search_y]).length==0   
+                    if this_match.bites.where(["x_pos=? and y_pos=?",search_x, search_y]).length==0   
                         return_array << {x:search_x,y:search_y}
                     end
                 end
