@@ -14,7 +14,7 @@ let currentFood;
 
 document.addEventListener("DOMContentLoaded", init());
 
-//fetchGrid starts the game by PATCHing criteria for the grid to the server - these values are hard coded but may be updated in the future
+//fetchGrid starts the game by PATCHing criteria for the grid to the DB - these values are hard coded but may be updated in the future
 //then passes the game object to generateRows
 function fetchGrid() {
   const gridWidth = 20;
@@ -49,8 +49,6 @@ function generateRows(gameInfo) {
       td.dataset.y_pos = `${y_pos + 1}`;
       td.dataset.x_pos = `${x_pos + 1}`;
       td.className = "grid-square";
-      td.height = "25px";
-      td.width = "25px";
       tr.appendChild(td);
     }
   }
@@ -69,7 +67,7 @@ function startGame(e) {
   fetchMatch();
 }
 
-//fetchMatch fetches the player's Match object from the server
+//fetchMatch fetches the player's Match object from the DB
 //then calls placementState
 function fetchMatch() {
   foodCounter = 0;
@@ -103,21 +101,39 @@ function removeGridListeners(func) {
   });
 }
 
+//sidebarCurrentFood is called after placement listeners are added to grid, to display the food you're currently placing
+//clicking on the displayed food will rotate it
 function sidebarCurrentFood() {
   const h3 = document.createElement("h3");
   h3.textContent = "Now placing...";
+  SIDEBAR.appendChild(h3);
 
-  const div = document.createElement("div");
   const table = document.createElement("table");
   table.id = "food-display";
   table.dataset.name = currentFood.name;
 
   if (currentFood.vertical) {
-    for (let i = 0; i < currentFood.length; ++i) {}
+    for (let i = 0; i < currentFood.length; ++i) {
+      const tr = document.createElement("tr");
+      const td = document.createElement("td");
+      td.style.backgroundColor = "blue";
+      tr.appendChild(td);
+      table.appendChild(tr);
+    }
+  } else {
+    const tr = document.createElement("tr");
+    for (let i = 0; i < currentFood.item_length; ++i) {
+      const td = document.createElement("td");
+      td.style.backgroundColor = "blue";
+      tr.appendChild(td);
+      table.appendChild(tr);
+    }
   }
+
+  SIDEBAR.appendChild(table);
 }
 
-//addFoodToSquare takes an event from the placement listeners, if a food is vertical, then sends the starting location of the food back to the server
+//addFoodToSquare takes an event from the placement listeners, if a food is vertical, then sends the starting location of the food back to the DB
 //then calls renderFoodGrids to render the placement in the DOM
 function addFoodToSquare(e) {
   const clickedSquare = e.target;
@@ -148,12 +164,13 @@ function addFoodToSquare(e) {
     .then(foodGridSquares => renderFoodGrids(foodGridSquares));
 }
 
-//renderFoodGrids checks the reply from the server to ensure food was validly placed, then shades cells where a food was placed
+//renderFoodGrids checks the reply from the DB to ensure food was validly placed, then shades cells where a food was placed
 //if there are more foods to be placed, the placementState is called again
 //if all foods have been placed, the game enters gameState
 function renderFoodGrids(foodGridSquares) {
   if (foodGridSquares.length != 0) {
     foodGridSquares.forEach(gridSquare => {
+      SIDEBAR.innerHTML = "";
       const targetSquare = document.querySelector(
         `[data-x_pos='${gridSquare.x_pos}'][data-y_pos='${gridSquare.y_pos}']`
       );
@@ -167,7 +184,7 @@ function renderFoodGrids(foodGridSquares) {
       placementState();
     }
   } else {
-    alert("You can't put food where it would fall off the table!");
+    alert("Can't put food where it would fall off the table!");
   }
 }
 
