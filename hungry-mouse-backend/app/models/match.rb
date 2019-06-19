@@ -49,14 +49,15 @@ class Match < ApplicationRecord
 # if so, run their game, not passing in positions, so they are computer generated
 
 # TODO Generate x and y if 0 for the AI ..... need to turn into a function and be smart
-        if x_pos==0
-            x_pos = rand(1..this_match.game.qty_columns)
-        end
-        if y_pos==0
-            y_pos = rand(1..this_match.game.qty_rows)
+        if x_pos==0 || y_pos==0
+            shot_array=suggested_shots
+            shot=shot_array.sample
+            x_pos=shot[:x]
+            y_pos=shot[:y]
         end 
 
-        nibble_hash = { player:this_match.player.name,
+        nibble_hash = { player_id:this_match.player.id, 
+                    player:this_match.player.name,
                     round_no:this_match.round_no,
                     x_pos:x_pos,
                     y_pos:y_pos,
@@ -101,6 +102,105 @@ class Match < ApplicationRecord
 
         # Return the hash
         nibble_hash
+    end
+
+    def suggested_shots 
+# Build an array of good shots, that can be sampled .... in theory this could be used 
+# as a help feature/function
+# 1) If the last bite, nibbled some cheese that isn't eaten surround that area
+# 2) Based upon the smallest cheese that still exists for other players, 
+#    build an array that covers the area best for horizontal and vertical placement
+#   return this for sampling
+        return_array=[]
+        last_bite=self.bites.all.last # Get the last bite
+        search_x=last_bite.x_pos
+        search_y=last_bite.y_pos
+
+        if last_bite # Just in case this is the 1st bite
+    # Get all of the foods nibbled by the last bite, that we will loop over to build an array of potential shots
+            other_matches.each {|other_match|
+                other_match.food_grids.where(["food_grids.x_pos=? and food_grids.y_pos=?",search_x, search_y]).each {|nibbled_food|
+                 nibbled_foods.each {|food| # For each nibbled food
+                  if !food.eaten # If not fully eaten
+# Superb!!! lets build a sample around this cell
+# if we assume this hit was 3.3, then good places are 2.3, 4.3, 3.2 or 3.4
+# if one of those was a hit, for this food, then we know the orientation, so only 2 choices
+# but surrounding the sequence of hits.
+                    search_array=[ {x:search_x-1, y:search_y, horizontal:true, x_shift:-1, y_shift:0 },
+                        {x:search_x+1, y:search_y, horizontal:true,  x_shift:+1, y_shift:0 },
+                        {x:search_x, y:search_y-1, horizontal:false,  x_shift:0, y_shift:-1 },
+                        {x:search_x, y:search_y+1, horizontal:false,  x_shift:0, y_shift:+1 }]
+
+                    search_array.each {|search| # Loop thru each array element
+                    # Check if the element has been modified or valid, and if not dont do the rest
+                        if search[:x]==0 || search[:y]==0
+                            continue_search=false;
+                        else
+                            continue_search=true;
+                        end
+
+                        while( continue_search )
+                                if self.bites.where(["x_pos=? and y_pos=?",search[:x], search[:y]]).length>0
+                                # We did bite here .... so see if this was a hit.
+                                    if food.food_grids.where(["food_grids.x_pos=? and food_grids.y_pos=?",search[:x], search[:y]]).length>0
+                                    # And that bite, was a nibble ... so we need to perform a shift and continue the loop
+                                        search[:x]+=search[:x_shift]
+                                        search[:y]+=search[:y_shift]
+                                        if search[:horizontal]
+                                            search_array[2][:x]=0 # Make the vertical ones irrelevant
+                                            search_array[3][:x]=0
+                                        else
+                                            search_array[0][:x]=0 # Make the horizontal ones irrelevant
+                                            search_array[1][:x]=0
+                                        end                            
+                                    else # End of we did nibble here, but it wasn't a bite, so end of the road for this search option
+                                        continue_search=false;
+                                        search[:x]=0;
+                                    end
+                                else 
+                                    # we haven't bitten here, so keep the array intact, but exit the loop
+                                    continue_search=false;
+                                end  # End of we did bite here
+                        end # End the while loop
+
+                      } # End of search array loop
+
+        # Ok, so we have done some amazing stuff to get best shots if you are close to eating some food
+        # now, we want to build the return hash with all of the none x elements
+                    search_array.each {|search|
+                        if search[:x]!=0 && search[:y]!=0
+                            return_array << search
+                        end
+                    }
+                end # End of check if there is some more to nibble
+                    } # End nibbled food loop
+                } # End possible nibbled food loop
+            } # End of other match loop
+        end # End of the .. has there been a previous bite check
+
+# At the end of all of that, if there are no choices on the return_array
+# randomly generate a valid option
+# TODO Generate x and y if 0 for the AI ..... need to turn into a function and be smart
+#        x_pos = rand(1..this_match.game.qty_columns)
+#        y_pos = rand(1..this_match.game.qty_rows)
+# rather than randomly generate, then try and get a position ... build an array of possibilities
+        if return_array.length==0
+            search_x=0
+            search_y=0
+            self.game.qty_columns.times do
+                search_x+=1
+                self.game.qty_rows.times do
+                    search_y+= 1
+                    if self.bites.where(["x_pos=? and y_pos=?",search_x, search_y]).length==0   
+                        return_array << {x:search_x,y:search_y}
+                    end
+                end
+                search_y=0;
+            end # End of array building do
+        end
+
+        return_array
+
     end
 
 end
