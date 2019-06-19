@@ -1,7 +1,7 @@
 const BASE_URL = "http://localhost:3000";
 const GAME_URL = `${BASE_URL}/games/1`;
 const BITE_URL = `${BASE_URL}/bite`;
-const MATCH_URL = `${BASE_URL}/matches/1`;
+const MATCH_URL = `${BASE_URL}/matches/2`;
 const GAMEBOARD = document.querySelector("#game-grid");
 const BODY = document.querySelector("body");
 const SIDEBAR = document.querySelector("#sidebar");
@@ -83,6 +83,7 @@ function fetchMatch() {
 function placementState() {
   foods = matchInfo.foods;
   currentFood = foods[foodCounter];
+  sidebarCurrentFood();
   addGridListeners(addFoodToSquare);
 }
 
@@ -100,6 +101,20 @@ function removeGridListeners(func) {
   squares.forEach(square => {
     square.removeEventListener("click", func);
   });
+}
+
+function sidebarCurrentFood() {
+  const h3 = document.createElement("h3");
+  h3.textContent = "Now placing...";
+
+  const div = document.createElement("div");
+  const table = document.createElement("table");
+  table.id = "food-display";
+  table.dataset.name = currentFood.name;
+
+  if (currentFood.vertical) {
+    for (let i = 0; i < currentFood.length; ++i) {}
+  }
 }
 
 //addFoodToSquare takes an event from the placement listeners, if a food is vertical, then sends the starting location of the food back to the server
