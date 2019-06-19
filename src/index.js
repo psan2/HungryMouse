@@ -248,7 +248,6 @@ function renderBites(biteJson) {
 
   if (!userBite.won) {
     renderUserBite(userBite);
-    setTimeout;
     renderMultComputerBites(computerBites);
   } else {
     endGame(userBite.player);
