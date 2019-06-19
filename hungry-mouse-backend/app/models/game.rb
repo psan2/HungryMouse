@@ -32,7 +32,7 @@ class Game < ApplicationRecord
         }
 
 # Now position each AI players pieces, randomly
-        ai_food.each { |food| 
+        ai_food.each { |food|
             food.vertical=rand(2);
             if food.vertical
                 x_range=self.qty_columns
@@ -41,15 +41,15 @@ class Game < ApplicationRecord
                 x_range=self.qty_columns-food.item_length
                 y_range=self.qty_rows
             end
-            food.x_pos=rand(x_range)
-            food.y_pos=rand(y_range)
+            food.x_pos=rand(x_range) + 1
+            food.y_pos=rand(y_range) + 1
             food.save
             food.position
         }
 
     end
 
-    def ai_food 
+    def ai_food
         self.foods.select {|f| f.player.ai==true}
     end
 

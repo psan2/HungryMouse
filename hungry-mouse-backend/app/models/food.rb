@@ -10,22 +10,22 @@ class Food < ApplicationRecord
         self.eaten=false;
         self.save;
         return_array = [];
-        x_position=x_pos 
+        x_position=x_pos
         y_position=y_pos
-        if self.vertical 
-            if self.y_pos+self.item_length <= self.game.qty_rows
-                self.item_length.times do 
+        if self.vertical
+            if self.y_pos+self.item_length <= self.game.qty_rows + 1
+                self.item_length.times do
                     return_array << FoodGrid.create(food_id:self.id, x_pos:x_position, y_pos:y_position, bite:false)
                     y_position+=1
                 end
-            end            
+            end
         else
-            if self.x_pos+self.item_length <= self.game.qty_columns
-                self.item_length.times do 
+            if self.x_pos+self.item_length <= self.game.qty_columns + 1
+                self.item_length.times do
                    return_array<<FoodGrid.create(food_id:self.id, x_pos:x_position, y_pos:y_position, bite:false)
                     x_position+=1
-                end 
-            end 
+                end
+            end
         end
         return_array
     end
