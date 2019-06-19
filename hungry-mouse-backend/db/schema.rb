@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_18_104715) do
+ActiveRecord::Schema.define(version: 2019_06_19_120450) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,6 +21,7 @@ ActiveRecord::Schema.define(version: 2019_06_18_104715) do
     t.integer "y_pos"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "bite", default: false
     t.index ["match_id"], name: "index_bites_on_match_id"
   end
 
