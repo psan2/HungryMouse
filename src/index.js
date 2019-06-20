@@ -236,7 +236,9 @@ function renderFoodGrids(foodGridSquares) {
       placementState();
     }
   } else {
-    alert("Can't put food where it would fall off the table!");
+    alert(
+      "Invalid placement location - please ensure food is on the table, and not overlapping"
+    );
   }
 }
 
