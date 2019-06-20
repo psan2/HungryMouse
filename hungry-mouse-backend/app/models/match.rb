@@ -72,6 +72,7 @@ class Match < ApplicationRecord
                     x_pos:x_pos,
                     y_pos:y_pos,
                     nibbled:false,
+                    nibbled_food:"",
                     eaten:false,
                     won:false
                      } # Will be used to show what has happened
@@ -82,9 +83,10 @@ class Match < ApplicationRecord
     other_matches(this_match).each { |other_match|   
         other_match.foods.each { |other_food|
             FoodGrid.where(["food_id=? and x_pos=? and y_pos=?", other_food.id,x_pos, y_pos]).each {|other_foodgrid|
-                other_foodgrid.bite=true
-                nibble_hash[:nibbled]=true
-                other_foodgrid.save
+                other_foodgrid.bite=true;
+                nibble_hash[:nibbled]=true;
+                nibble_hash[:nibbled_food]=other_food.name;
+                other_foodgrid.save;
                 thisbite.bite=true;
                 thisbite.save;
         # If no other bits to bite, then set the food item to eaten
