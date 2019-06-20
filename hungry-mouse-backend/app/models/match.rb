@@ -5,6 +5,8 @@ class Match < ApplicationRecord
     has_many :bites
     has_many :food_grids, through: :foods
 
+# WORKTODO - HIGHLIGHTS ADDITIONAL WORK THAT COULD BE DONE TO IMPROVE THE CODE/PROCESS
+
     def other_matches( this_match=self )
         this_match.game.matches.select {|match|match.id!=this_match.id}.each {|current_match| }
     end
@@ -107,7 +109,7 @@ class Match < ApplicationRecord
 
     def successfullbites(this_match=self)
         # Get all of the bites, linked to foods that are not eaten
-        # WORKTODO HERE ... NEED TO LIMIT TO UNEATEN FOODS
+        # WORKTODO HERE .. I THINK.. WOULD BE GOOD TO LIMIT TO UNEATEN FOODS 
         this_match.bites.select {|b| b.bite==true } # Get the last bite
     end
 
@@ -122,19 +124,18 @@ class Match < ApplicationRecord
         return_array=[]
         last_bite=successfullbites(this_match).last # Get the last bite
 
-puts(last_bite)
-
         if last_bite # Just in case this is the 1st bite
             search_x=last_bite.x_pos
             search_y=last_bite.y_pos    
     # Get all of the foods nibbled by the last bite, that we will loop over to build an array of potential shots
+# WORKTODO -- VERY JUVINILE MOD1 RUBY HERE .... USE HELPER METHODS TO GET AN ARRAY OF UNEATEN NIBBLED FOOD, RATHER THAN HAVE TWO EACHES AND AN IF
             other_matches(this_match).each {|other_match|
                 other_match.food_grids.where(["food_grids.x_pos=? and food_grids.y_pos=?",search_x, search_y]).each {|nibbled_food|
                   if !nibbled_food.food.eaten # If not fully eaten
-# Superb!!! lets build a sample around this cell
-# if we assume this hit was 3.3, then good places are 2.3, 4.3, 3.2 or 3.4
-# if one of those was a hit, for this food, then we know the orientation, so only 2 choices
-# but surrounding the sequence of hits.
+    # Superb!!! lets build a sample around this cell
+    # if we assume this hit was 3.3, then good places are 2.3, 4.3, 3.2 or 3.4
+    # if one of those was a hit, for this food, then we know the orientation, so only 2 choices
+    # but surrounding the sequence of hits.
                     search_array=[ {x:search_x-1, y:search_y, horizontal:true, x_shift:-1, y_shift:0 },
                         {x:search_x+1, y:search_y, horizontal:true,  x_shift:+1, y_shift:0 },
                         {x:search_x, y:search_y-1, horizontal:false,  x_shift:0, y_shift:-1 },
@@ -142,6 +143,7 @@ puts(last_bite)
 
                     search_array.each {|search| # Loop thru each array element
                     # Check if the element has been modified or valid, and if not dont do the rest
+#WORKTODO --- CHANGE THE IF TO AN EXPRESSION THINGY RATHER THAN A LONG WINDED IF ELSE END
                         if search[:x]==0 || search[:y]==0
                             continue_search=false;
                         else
@@ -186,12 +188,12 @@ puts(last_bite)
             } # End of other match loop
         end # End of the .. has there been a previous bite check
 
-# At the end of all of that, if there are no choices on the return_array
-# randomly generate a valid option
-# TODO Generate x and y if 0 for the AI ..... need to turn into a function and be smart
-#        x_pos = rand(1..this_match.game.qty_columns)
-#        y_pos = rand(1..this_match.game.qty_rows)
-# rather than randomly generate, then try and get a position ... build an array of possibilities
+    # At the end of all of that, if there are no choices on the return_array
+    # randomly generate a valid option
+    # rather than randomly generate, then try and get a position ... build an array of possibilities
+# WORKTODO - FIGURE OUT HOW TO RETURN THE BEST POSSIBLE CHOICES, RATHER THAN ALL CHOICES
+# CURRENT THOUGHT IS TO CREATE THE FULL ARRAY WITH A HASH VALUE INDICATING IF IT IS VALID,
+# THEN ITERATE TO SCORE THE OPTIONS BASED UPON PROXIMITY OF OTHER X AND Y AXIS ELEMENTS
         if return_array.length==0
             search_x=0
             search_y=0
@@ -199,6 +201,7 @@ puts(last_bite)
                 search_x+=1
                 self.game.qty_rows.times do
                     search_y+= 1
+# WORKTODO - CONSIDER ADDING AN INDEX TO X_POS AND Y_POS
                     if this_match.bites.where(["x_pos=? and y_pos=?",search_x, search_y]).length==0   
                         return_array << {x:search_x,y:search_y}
                     end

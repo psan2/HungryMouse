@@ -33,21 +33,29 @@ class Game < ApplicationRecord
 
 # Now position each AI players pieces, randomly
         ai_food.each { |food|
-            food.vertical=rand(2);
-            if food.vertical
-                x_range=self.qty_columns
-                y_range=self.qty_rows-food.item_length
-            else
-                x_range=self.qty_columns-food.item_length
-                y_range=self.qty_rows
+            counter=0 # This is a safety measure to prevent an infinit loop
+            while ( position_food(food).length==0 || counter > 5) do
+                counter+=1
             end
-            food.x_pos=rand(x_range) + 1
-            food.y_pos=rand(y_range) + 1
-            food.save
-            food.position
         }
 
     end
+
+    def position_food( food ) 
+# Do the processing for each food element that is randomly positioned
+        food.vertical=rand(2);
+        if food.vertical
+            x_range=self.qty_columns
+            y_range=self.qty_rows-food.item_length
+        else
+            x_range=self.qty_columns-food.item_length
+            y_range=self.qty_rows
+        end
+        food.x_pos=rand(x_range) + 1
+        food.y_pos=rand(y_range) + 1
+        food.save
+        food.position
+    end 
 
     def ai_food
         self.foods.select {|f| f.player.ai==true}
