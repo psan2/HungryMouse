@@ -18,7 +18,13 @@ game = Game.create(qty_players:2,qty_columns:20,qty_rows:20);
 match1 = Match.create(player_id:computer.id, game_id:game.id);
 match2 = Match.create(player_id:player2.id, game_id:game.id);
 
-food1 = Food.create(match_id:match1.id, name:"Big cheese", item_length:3);
-food2 = Food.create(match_id:match2.id, name:"Big cheese", item_length:3);
-food3 = Food.create(match_id:match1.id, name:"Small cheese", item_length:2);
-food4 = Food.create(match_id:match2.id, name:"Small cheese", item_length:2);
+food1 = Food.create(match_id:match1.id, name:"parmesan", item_length:3);
+food2 = Food.create(match_id:match2.id, name:"parmesan", item_length:3);
+food3 = Food.create(match_id:match1.id, name:"cheddar", item_length:2);
+food4 = Food.create(match_id:match2.id, name:"cheddar", item_length:2);
+food1 = Food.create(match_id:match1.id, name:"roquefort", item_length:3);
+food2 = Food.create(match_id:match2.id, name:"roquefort", item_length:3);
+food3 = Food.create(match_id:match1.id, name:"baguette", item_length:5);
+food4 = Food.create(match_id:match2.id, name:"baguette", item_length:5);
+food3 = Food.create(match_id:match1.id, name:"taleggio", item_length:4);
+food4 = Food.create(match_id:match2.id, name:"taleggio", item_length:4);
