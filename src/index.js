@@ -164,16 +164,15 @@ function sidebarCurrentFood() {
       table.appendChild(tr);
     }
   }
+  const em = document.createElement("EM");
+  em.textContent = "Click to rotate";
+  SIDEBAR.appendChild(em);
 
   SIDEBAR.appendChild(table);
   const sidebarGrid = document.querySelectorAll(".sidebar-grid");
   sidebarGrid.forEach(grid =>
     grid.addEventListener("click", rotateSidebarGrid)
   );
-
-  const em = document.createElement("EM");
-  em.textContent = "Click to rotate";
-  SIDEBAR.appendChild(em);
 }
 
 //rotates sidebar grid cheese
