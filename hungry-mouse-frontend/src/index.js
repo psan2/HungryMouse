@@ -139,7 +139,7 @@ function removeBiteListener() {
 //clicking on the displayed food will rotate it
 function sidebarCurrentFood() {
   const h3 = document.createElement("h3");
-  h3.textContent = "⬅️ Click a square to place food";
+  h3.textContent = "↙️ Click a square to place food";
   SIDEBAR.appendChild(h3);
 
   const table = document.createElement("table");
@@ -241,9 +241,10 @@ function renderFoodGrids(foodGridSquares) {
 
 //fetches initial grid - called when page is loaded
 function init() {
-  RESTARTBUTTON.style.display = "none";
   STARTBUTTON.style.display = "block";
   STARTBUTTON.addEventListener("click", startGame);
+  RESTARTBUTTON.style.display = "block";
+  RESTARTBUTTON.addEventListener("click", () => init());
   FIRSTGRID.innerHTML = "";
   SECONDGRID.innerHTML = "";
   SIDEBAR.innerHTML = "";
@@ -253,7 +254,7 @@ function init() {
 function gameState() {
   const guide = document.createElement("span");
   guide.innerHTML =
-    "Click anywhere to take a bite.\n The computer will bite after!";
+    "Click a square on their table to bite ↘️<br>The computer will bite after!";
   SIDEBAR.appendChild(guide);
   addBiteListener(takeABite);
 }
@@ -356,9 +357,4 @@ function endGame(player) {
   setInterval(function() {
     winner.style.display = winner.style.display == "none" ? "" : "none";
   }, 500);
-
-  const restart = document.createElement("button");
-  restart.textContent = "Restart";
-  restart.addEventListener("click", () => init());
-  BODY.appendChild(restart);
 }
