@@ -10,7 +10,7 @@ Game.destroy_all
 Match.destroy_all
 Food.destroy_all
 
-computer = Player.create( name:"Computer", ai:true);
+computer = Player.create( name:"Computer", ai:true, total_wins:0, total_lost:0);
 player2 = Player.create( name:"2nd player");
 
 game = Game.create(qty_players:2,qty_columns:20,qty_rows:20);
