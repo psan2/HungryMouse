@@ -10,8 +10,17 @@
   <body>
     <h1>HUNGRY MOUSE</h1>
     <div class="grid-container" id="main">
-      <table id="game-grid" class="flex-container"></table>
-      <div id="sidebar"></div>
+      <div>
+        <h3>Your Table</h3>
+        <table id="left-grid" class="flex-container"></table>
+        <button id="start-button">Start</button>
+        <button id="restart-button">Restart</button>
+      </div>
+      <div id="sidebar" class="sidebar"></div>
+      <div>
+        <h3>Their Table</h3>
+        <table id="right-grid" class="flex-container"></table>
+      </div>
     </div>
   </body>
   <script type="text/javascript" src="src/index.js"></script>
