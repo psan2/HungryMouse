@@ -37,7 +37,12 @@ h3 {
 }
 
 .sidebar {
+  padding-left: 20px;
   width: 300px;
+}
+
+.sidebar span {
+  text-align: center;
 }
 
 .user-placed {
