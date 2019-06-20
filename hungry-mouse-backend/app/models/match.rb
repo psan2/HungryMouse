@@ -16,11 +16,20 @@ class Match < ApplicationRecord
     end
 
     def winner?( this_match=self )
+
         if other_matches(this_match).select{ |match| match.loser==false }.length==0
             this_match.winner=true;
             this_match.save;
+            this_match.player.total_wins+=1;
+            this_match.player.save;
+            other_matches( this_match ).each {|other_match|
+                other_match.player.total_lost+=1;
+                other_match.player.save;
+            }
         end
+
         this_match.winner
+    
     end
 
     def bite(x_pos=0, y_pos=0 )
