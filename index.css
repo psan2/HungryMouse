@@ -27,7 +27,23 @@ h3 {
 }
 
 .cheddar {
-  content: 🧀;
+  background-image: url(https://image.flaticon.com/icons/svg/1868/1868809.svg);
+}
+
+.parmesan {
+  background-image: url(https://image.flaticon.com/icons/svg/135/135651.svg);
+}
+
+.roquefort {
+  background-image: url(https://image.flaticon.com/icons/png/512/1859/1859644.png);
+}
+
+.baguette {
+  background-image: url(https://image.flaticon.com/icons/svg/135/135596.svg);
+}
+
+.taleggio {
+  background-image: url(https://image.flaticon.com/icons/svg/1421/1421625.svg);
 }
 
 .grid-container {
