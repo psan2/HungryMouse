@@ -2,11 +2,14 @@ const BASE_URL = "http://localhost:3000";
 const GAME_URL = `${BASE_URL}/games/1`;
 const BITE_URL = `${BASE_URL}/bite`;
 const MATCH_URL = `${BASE_URL}/matches/2`;
-const GAMEBOARD = document.querySelector("#game-grid");
+const FIRSTGRID = document.querySelector("#left-grid");
+const SECONDGRID = document.querySelector("#right-grid");
 const BODY = document.querySelector("body");
 const SIDEBAR = document.querySelector("#sidebar");
 const ROW_COUNT = 10;
 const COL_COUNT = 10;
+const STARTBUTTON = document.querySelector("#start-button");
+const RESTARTBUTTON = document.querySelector("#restart-button");
 
 let gameInfo;
 let playerMatchInfo;
@@ -18,9 +21,9 @@ let biteListener;
 
 document.addEventListener("DOMContentLoaded", init());
 
-//fetchGrid starts the game by PATCHing criteria for the grid to the DB - these values are hard coded but may be updated in the future
+//fetchGrids starts the game by PATCHing criteria for the grid to the DB - these values are hard coded but may be updated in the future
 //then passes the game object to generateRows
-function fetchGrid() {
+function fetchGrids() {
   const options = {
     method: "PATCH",
     headers: {
@@ -36,21 +39,27 @@ function fetchGrid() {
 
   return fetch(GAME_URL, options) //add /1 when changed to patch
     .then(resp => resp.json())
-    .then(data => generateRows(data));
+    .then(gameData => generateBothGrids(gameData));
+}
+
+function generateBothGrids(gameData) {
+  generateRows(gameData, FIRSTGRID);
+  generateRows(gameData, SECONDGRID);
 }
 
 //generateRows generates the initial grid and assigns the necessary identifying information for future manipulation
 //this function does not call any additional functions - the next action is triggered by the start button
-function generateRows(gameInfo) {
+function generateRows(gameInfo, targetGrid) {
   for (let y_pos = 0; y_pos < gameInfo.qty_columns; y_pos++) {
     const tr = document.createElement("tr");
     tr.id = `r${y_pos + 1}`;
 
     const rowNumber = document.createElement("td");
     rowNumber.textContent = y_pos + 1;
+    rowNumber.style.textAlign = "right";
     tr.appendChild(rowNumber);
 
-    GAMEBOARD.appendChild(tr);
+    targetGrid.appendChild(tr);
     for (let x_pos = 0; x_pos < gameInfo.qty_rows; x_pos++) {
       const td = document.createElement("td");
       td.dataset.y_pos = `${y_pos + 1}`;
@@ -65,25 +74,26 @@ function generateRows(gameInfo) {
       colNumber.textContent = num;
     }
     colNumber.style.textAlign = "center";
-    GAMEBOARD.appendChild(colNumber);
+    targetGrid.appendChild(colNumber);
   }
-
-  const start = document.createElement("button");
-  start.id = "start-button";
-  start.textContent = "Start game";
-  start.addEventListener("click", startGame);
-  BODY.appendChild(start);
 }
+
+// const start = document.createElement("button");
+// start.id = "start-button";
+// start.textContent = "Start game";
+// start.addEventListener("click", startGame);
+// BODY.appendChild(start);
 
 //startGame receives a click from the start button, removes the start button, and calls fetchMatch
 function startGame(e) {
   e.preventDefault();
-  document.querySelector("#start-button").remove();
+  STARTBUTTON.style.display = "none";
   fetchMatch();
 }
 
 //fetchMatch fetches the player's Match object from the DB
 //then calls placementState
+//foodCounter keeps track of what item in the foods array we're placing on the board - resets to beginning of array at the start of each game
 function fetchMatch() {
   foodCounter = 0;
   fetch(MATCH_URL)
@@ -93,6 +103,9 @@ function fetchMatch() {
 }
 
 //placementState assigns the foods for this match to the state-wide variable foods, then sets the initial food to be placed and calls addPlacementListeners
+//foods array is created based on the template food list the db has for this match
+//currentFood is the food we're placing, identified by the foodCounter index (which will be incremented later)
+//sidebarCurrentFood displays the shape of the food the user is placing
 function placementState() {
   foods = matchInfo.foods;
   currentFood = foods[foodCounter];
@@ -103,30 +116,30 @@ function placementState() {
 //adds a specified event listener to gameboard
 function addPlacementListener(func) {
   placementListener = func;
-  GAMEBOARD.addEventListener("click", placementListener);
+  FIRSTGRID.addEventListener("click", placementListener);
 }
 
 //removes a specified event listener from gameboard
 function removePlacementListener() {
-  GAMEBOARD.removeEventListener("click", placementListener);
+  FIRSTGRID.removeEventListener("click", placementListener);
 }
 
 //adds a specified event listener to gameboard
 function addBiteListener(func) {
   biteListener = func;
-  GAMEBOARD.addEventListener("click", biteListener);
+  SECONDGRID.addEventListener("click", biteListener);
 }
 
 //removes a specified event listener from gameboard
 function removeBiteListener() {
-  GAMEBOARD.removeEventListener("click", biteListener);
+  SECONDGRID.removeEventListener("click", biteListener);
 }
 
 //sidebarCurrentFood is called after placement listeners are added to grid, to display the food you're currently placing
 //clicking on the displayed food will rotate it
 function sidebarCurrentFood() {
   const h3 = document.createElement("h3");
-  h3.textContent = "Now placing...";
+  h3.textContent = "⬅️ Click a square to place food";
   SIDEBAR.appendChild(h3);
 
   const table = document.createElement("table");
@@ -212,7 +225,9 @@ function renderFoodGrids(foodGridSquares) {
       );
       targetSquare.className = "user-placed";
     });
+
     removePlacementListener();
+
     if (foodCounter >= foods.length - 1) {
       gameState();
     } else {
@@ -226,13 +241,13 @@ function renderFoodGrids(foodGridSquares) {
 
 //fetches initial grid - called when page is loaded
 function init() {
-  fetchGrid();
-}
-
-function reinit() {
-  GAMEBOARD.innerHTML = "";
-  document.querySelector("button").remove();
-  init();
+  RESTARTBUTTON.style.display = "none";
+  STARTBUTTON.style.display = "block";
+  STARTBUTTON.addEventListener("click", startGame);
+  FIRSTGRID.innerHTML = "";
+  SECONDGRID.innerHTML = "";
+  SIDEBAR.innerHTML = "";
+  fetchGrids();
 }
 
 function gameState() {
@@ -286,7 +301,9 @@ function renderBites(biteJson) {
 
 function renderUserBite(userBite) {
   const userBiteSquare = document.querySelector(
-    `[data-x_pos='${userBite.x_pos}'][data-y_pos='${userBite.y_pos}']`
+    `#right-grid [data-x_pos='${userBite.x_pos}'][data-y_pos='${
+      userBite.y_pos
+    }']`
   );
 
   if (userBite.nibbled) {
@@ -300,7 +317,9 @@ function renderMultComputerBites(computerBites) {
   for (let i = 0; i < computerBites.length; i++) {
     const computerBite = computerBites[i];
     const computerBiteSquare = document.querySelector(
-      `[data-x_pos='${computerBite.x_pos}'][data-y_pos='${computerBite.y_pos}']`
+      `#left-grid [data-x_pos='${computerBite.x_pos}'][data-y_pos='${
+        computerBite.y_pos
+      }']`
     );
     if (computerBite.nibbled) {
       computerBiteSquare.className = "computer-bitten-hit";
@@ -340,6 +359,6 @@ function endGame(player) {
 
   const restart = document.createElement("button");
   restart.textContent = "Restart";
-  restart.addEventListener("click", () => reinit());
+  restart.addEventListener("click", () => init());
   BODY.appendChild(restart);
 }
