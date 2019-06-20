@@ -1,6 +1,7 @@
 const MATCH_URL='http://localhost:3000/matches/1'
 const MATCHBITE_URL='http://localhost:3000/bite'
 const GAME_URL='http://localhost:3000/games/1'
+const LEADER_URL='http://localhost:3000/leaderboards'
 
 function setFood(foodId, xPos, yPos, verticalPos) {
 
@@ -22,6 +23,24 @@ function setFood(foodId, xPos, yPos, verticalPos) {
     .then( data => data.json())
     .then(currentFood => console.log(currentFood)
   );
+}
+
+function leader(nameIn) {
+
+    const options = {
+        method: "POST",
+        headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            name: nameIn
+        })
+    };
+
+  return fetch(LEADER_URL, options)
+    .then( data => data.json())
+    .then( console.log );
 }
 
 function initGame(gameId, qtyColumns, qtyRows ) {
@@ -76,5 +95,9 @@ initGame(1,10,10)
 .then( () => bite(2,3,1))
 
 
-// The computers horizontal food item should be eaten, the other nibbled
-
+// Helpers to test
+// match=Match.find(2)
+// match.food_grids.map{|fg|fg.food_id}.uniq
+// match.foods.map{|f|f.id}
+//food=Food.find(2)
+//food.valid_position?(1,1)
