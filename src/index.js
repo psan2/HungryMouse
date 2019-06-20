@@ -289,7 +289,6 @@ function takeABite(e) {
 }
 
 function renderBites(biteJson) {
-  debugger;
   const userBite = biteJson.this_shot;
   const computerBites = biteJson.ai_shots;
 
@@ -305,13 +304,17 @@ function renderBites(biteJson) {
 }
 
 function renderUserBite(userBite) {
+  const nibbledFood = userBite.nibbled_food;
   const userBiteSquare = document.querySelector(
     `#right-grid [data-x_pos='${userBite.x_pos}'][data-y_pos='${
       userBite.y_pos
     }']`
   );
-
-  userBiteSquare.className = `${userBiteSquare.className}-bitten`;
+  if (nibbledFood) {
+    userBiteSquare.className += ` ${nibbledFood}-bitten`;
+  } else {
+    userBiteSquare.className = `${userBiteSquare.className}-bitten`;
+  }
 }
 
 function renderMultComputerBites(computerBites) {
@@ -341,12 +344,12 @@ function endGame(player) {
     winner.textContent = "COMPUTER WINS";
     winner.style.color = "red";
     message.style.color = "red";
+    SIDEBAR.appendChild(message);
   } else if (player === "2nd player") {
     winner.textContent = "YOU WIN";
     winner.style.color = "green";
   }
 
-  SIDEBAR.appendChild(message);
   SIDEBAR.appendChild(winner);
 
   setInterval(function() {
