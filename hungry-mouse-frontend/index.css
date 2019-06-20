@@ -46,24 +46,35 @@ h3 {
 }
 
 .user-placed {
-  border: 1px solid black;
-  background: blue;
+  /* border: 1px solid black;
+  background: blue; */
+  background-size: cover;
+  background-image: url("https://holidaywonders.net/wp-content/uploads/2019/05/awesome-14-cliparts-for-free-download-cheese-clipart-and-use-in-for-you.png")
 }
 
-.computer-bitten {
+ .computer-bitten {
   border: 3px solid red;
   margin-right: 10px;
-}
-
+} 
+  
 .user-bitten {
   border: 3px solid green;
   margin-right: 10px;
 }
 
-.computer-bitten-hit {
+/* .computer-bitten-hit {
   background: red;
-}
+} */
+.computer-bitten-hit {
+  background-size: cover;
+  background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrq8-6m-apuqNhVp02L1fuxQjW4Hga6kA_Z1lcKMFoySh7LynYxw")
+  }
 
-.user-bitten-hit {
+
+/* .user-bitten-hit {
   background: green;
-}
+} */
+.user-bitten-hit {
+  background-size: cover;
+  background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrq8-6m-apuqNhVp02L1fuxQjW4Hga6kA_Z1lcKMFoySh7LynYxw")
+  }

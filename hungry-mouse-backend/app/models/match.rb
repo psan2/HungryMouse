@@ -116,10 +116,31 @@ class Match < ApplicationRecord
         nibble_hash
     end
 
-    def successfullbites(this_match=self)
+    def lastsuccessfullbite(this_match=self)
         # Get all of the bites, linked to foods that are not eaten
         # WORKTODO HERE .. I THINK.. WOULD BE GOOD TO LIMIT TO UNEATEN FOODS 
-        this_match.bites.select {|b| b.bite==true } # Get the last bite
+#        this_match.bites.select {|b| b.bite==true } # Get the last bite
+
+        # I just can't get the following to work, so just return one of them
+        # this_match.bites.select {|b| b.bite==true }.select { |bb| 
+        #     ( this_match.other_matches(this_match).select { |om|
+        #         om.foods.select { |ff| !ff.eaten &&
+        #             ff.food_grids.where( ["food_grids.x_pos=? and food_grids.y_pos=?", bb.x_pos, bb.y_pos])
+        #         }
+        #       } )
+        #     }
+
+            return_array = []
+
+            this_match.bites.select {|b| b.bite==true }.each {|bite|
+                this_match.other_matches(this_match).each {|om|
+                    if om.foods.select { |ff| !ff.eaten &&
+                        ff.food_grids.where( ["food_grids.x_pos=? and food_grids.y_pos=?", bite.x_pos, bite.y_pos]) }.length>0
+                        return_array << bite
+                    end
+                }
+            }
+
     end
 
     def suggested_shots(this_match=self) 
@@ -131,7 +152,7 @@ class Match < ApplicationRecord
 #   return this for sampling
 
         return_array=[]
-        last_bite=successfullbites(this_match).last # Get the last bite
+        last_bite=lastsuccessfullbite(this_match).last
 
         if last_bite # Just in case this is the 1st bite
             search_x=last_bite.x_pos
