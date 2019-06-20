@@ -10,6 +10,9 @@ const ROW_COUNT = 10;
 const COL_COUNT = 10;
 const STARTBUTTON = document.querySelector("#start-button");
 const RESTARTBUTTON = document.querySelector("#restart-button");
+const LEADERBOARD = document.querySelector("#leaderboard");
+STARTBUTTON.addEventListener("click", startGame);
+RESTARTBUTTON.addEventListener("click", () => init());
 
 let gameInfo;
 let playerMatchInfo;
@@ -42,6 +45,10 @@ function fetchGrids() {
     .then(resp => resp.json())
     .then(gameData => generateBothGrids(gameData));
 }
+
+// class GridSquare {}
+
+// class Grid {}
 
 function generateBothGrids(gameData) {
   generateRows(gameData, FIRSTGRID);
@@ -151,7 +158,7 @@ function sidebarCurrentFood() {
     for (let i = 0; i < currentFood.item_length; ++i) {
       const tr = document.createElement("tr");
       const td = document.createElement("td");
-      td.className = "grid-square sidebar-grid user-placed";
+      td.className = `grid-square sidebar-grid ${currentFood.name}`;
       tr.appendChild(td);
       table.appendChild(tr);
     }
@@ -159,7 +166,7 @@ function sidebarCurrentFood() {
     const tr = document.createElement("tr");
     for (let i = 0; i < currentFood.item_length; ++i) {
       const td = document.createElement("td");
-      td.className = "grid-square sidebar-grid user-placed";
+      td.className = `grid-square sidebar-grid ${currentFood.name}`;
       tr.appendChild(td);
       table.appendChild(tr);
     }
@@ -223,7 +230,7 @@ function renderFoodGrids(foodGridSquares) {
       const targetSquare = document.querySelector(
         `[data-x_pos='${gridSquare.x_pos}'][data-y_pos='${gridSquare.y_pos}']`
       );
-      targetSquare.className = "user-placed";
+      targetSquare.className += ` ${currentFood.name}`;
     });
 
     removePlacementListener();
@@ -244,9 +251,6 @@ function renderFoodGrids(foodGridSquares) {
 //fetches initial grid - called when page is loaded
 function init() {
   STARTBUTTON.style.display = "block";
-  STARTBUTTON.addEventListener("click", startGame);
-  RESTARTBUTTON.style.display = "block";
-  RESTARTBUTTON.addEventListener("click", () => init());
   FIRSTGRID.innerHTML = "";
   SECONDGRID.innerHTML = "";
   SIDEBAR.innerHTML = "";
@@ -285,11 +289,9 @@ function takeABite(e) {
 }
 
 function renderBites(biteJson) {
+  debugger;
   const userBite = biteJson.this_shot;
   const computerBites = biteJson.ai_shots;
-
-  console.log(userBite);
-  console.log(computerBites);
 
   if (!userBite.won) {
     renderUserBite(userBite);
@@ -309,11 +311,7 @@ function renderUserBite(userBite) {
     }']`
   );
 
-  if (userBite.nibbled) {
-    userBiteSquare.className += " user-bitten-hit";
-  } else {
-    userBiteSquare.className += " user-bitten";
-  }
+  userBiteSquare.className = `${userBiteSquare.className}-bitten`;
 }
 
 function renderMultComputerBites(computerBites) {
@@ -324,11 +322,7 @@ function renderMultComputerBites(computerBites) {
         computerBite.y_pos
       }']`
     );
-    if (computerBite.nibbled) {
-      computerBiteSquare.className = "computer-bitten-hit";
-    } else {
-      computerBiteSquare.className += " computer-bitten";
-    }
+    computerBiteSquare.className = `${computerBiteSquare.className}-bitten`;
     if (computerBite.won) {
       endGame(computerBite.player);
     }
@@ -339,18 +333,17 @@ function endGame(player) {
   removeBiteListener(takeABite);
   SIDEBAR.innerHTML = "";
 
-  const message = document.createElement("h2");
   const winner = document.createElement("h2");
-  message.textContent = "GAME OVER";
 
   if (player === "Computer") {
+    const message = document.createElement("h2");
+    message.textContent = "GAME OVER";
     winner.textContent = "COMPUTER WINS";
     winner.style.color = "red";
     message.style.color = "red";
   } else if (player === "2nd player") {
     winner.textContent = "YOU WIN";
     winner.style.color = "green";
-    message.style.color = "green";
   }
 
   SIDEBAR.appendChild(message);
