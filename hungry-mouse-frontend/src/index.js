@@ -30,6 +30,7 @@ function fetchGrids() {
       Accept: "application/json",
       "Content-Type": "application/json"
     },
+
     body: JSON.stringify({
       game_id: 1,
       qty_columns: COL_COUNT,
