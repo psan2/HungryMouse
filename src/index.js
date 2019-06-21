@@ -309,10 +309,13 @@ function renderUserBite(userBite) {
       userBite.y_pos
     }']`
   );
-  if (nibbledFood) {
+  if (userBiteSquare.dataset.nibbled === "true") {
+  } else if (nibbledFood) {
     userBiteSquare.className += ` ${nibbledFood}-bitten`;
+    userBiteSquare.dataset.nibbled = "true";
   } else {
     userBiteSquare.className = `${userBiteSquare.className}-bitten`;
+    userBiteSquare.dataset.nibbled = "true";
   }
 }
 
@@ -384,7 +387,7 @@ function newLeaderboardPlayer(e) {
   e.preventDefault();
   const form = e.target;
   const newName = form[0].value;
-
+  form[0].value = "";
   form.style.display = "none";
   postNewWinnerToDb(newName);
 }
@@ -434,6 +437,7 @@ function formatLeaderboard(leaderboardJson) {
 function renderLeaderboard(sortedArray) {
   const table = document.querySelector("#leaderboard-table");
   const tbody = document.querySelector("#leaderboard-table tbody");
+  tbody.innerHTML = "";
 
   table.style.display = "block";
 
