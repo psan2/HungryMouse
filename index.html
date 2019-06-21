@@ -23,8 +23,31 @@
       </div>
       <div id="leaderboard"></div>
     </div>
+    <div class="overlay">
+      <div class="o-inlay">
+        <span class="escape">X</span>
+        <h5 style="text-align: center; margin-bottom: 40px;">Leaderboard</h5>
+        <div>
+          <form id="new-name-form">
+            <input
+              id="new-name"
+              type="text"
+              placeholder="Your name"
+              name="player_name"
+              class="o-input"
+              style="width: 200px;"
+            />
+            <button id="new-name-submit" class="o-submit">Submit</button>
+          </form>
+        </div>
+        <table id="leaderboard-table">
+          <tr>
+            <th>Player</th>
+            <th>Wins</th>
+          </tr>
+        </table>
+      </div>
+    </div>
   </body>
-  <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet" />
-  <i class="em em-some-emoji"></i>
   <script type="text/javascript" src="src/index.js"></script>
 </html>

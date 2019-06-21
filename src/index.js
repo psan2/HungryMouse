@@ -9,9 +9,8 @@ const SIDEBAR = document.querySelector("#sidebar");
 const ROW_COUNT = 10;
 const COL_COUNT = 10;
 const STARTBUTTON = document.querySelector("#start-button");
-const RESTARTBUTTON = document.querySelector("#restart-button");
-const LEADERBOARD = document.querySelector("#leaderboard");
 STARTBUTTON.addEventListener("click", startGame);
+const RESTARTBUTTON = document.querySelector("#restart-button");
 RESTARTBUTTON.addEventListener("click", () => init());
 
 let gameInfo;
@@ -345,9 +344,11 @@ function endGame(player) {
     winner.style.color = "red";
     message.style.color = "red";
     SIDEBAR.appendChild(message);
+    toggleLeaderboard("computer");
   } else if (player === "2nd player") {
     winner.textContent = "YOU WIN";
     winner.style.color = "green";
+    toggleLeaderboard("player");
   }
 
   SIDEBAR.appendChild(winner);
@@ -355,4 +356,99 @@ function endGame(player) {
   setInterval(function() {
     winner.style.display = winner.style.display == "none" ? "" : "none";
   }, 500);
+}
+
+const LEADERBOARDFORM = document.querySelector("#new-name-form");
+LEADERBOARDFORM.addEventListener("submit", newLeaderboardPlayer);
+const ESCAPE = document.querySelector(".escape");
+ESCAPE.addEventListener("click", () => toggleLeaderboard());
+
+function toggleLeaderboard(winner) {
+  const overlay = document.querySelector(".overlay");
+  const form = document.querySelector("#new-name-form");
+  const table = document.querySelector("#leaderboard-table");
+  table.style.display = "none";
+  if (winner === undefined) {
+    overlay.style.display = "none";
+  } else if (winner === "computer") {
+    form.style.display = "none";
+    overlay.style.display = "block";
+    postNewWinnerToDb("Computer");
+  } else if (winner === "player") {
+    overlay.style.display = "block";
+    form.style.display = "block";
+  }
+}
+
+function newLeaderboardPlayer(e) {
+  e.preventDefault();
+  const form = e.target;
+  const newName = form[0].value;
+
+  form.style.display = "none";
+  postNewWinnerToDb(newName);
+}
+
+function postNewWinnerToDb(winnerName) {
+  const options = {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      name: winnerName
+    })
+  };
+
+  fetch(BASE_URL + "/leaderboards", options)
+    .then(resp => resp.json())
+    .then(formatLeaderboard);
+}
+
+function formatLeaderboard(leaderboardJson) {
+  let accumulator = {};
+  const winners = leaderboardJson.map(winner => winner.name);
+
+  let reducer = function(winCounts, winner) {
+    if (!winCounts[winner]) {
+      winCounts[winner] = 1;
+    } else {
+      winCounts[winner] = winCounts[winner] + 1;
+    }
+    return winCounts;
+  };
+
+  const winnerObj = winners.reduce(reducer, accumulator);
+
+  let sortable = [];
+  for (let winner in winnerObj) {
+    sortable.push([winner, winnerObj[winner]]);
+  }
+
+  sortable.sort((a, b) => b[1] - a[1]);
+
+  renderLeaderboard(sortable);
+}
+
+function renderLeaderboard(sortedArray) {
+  const table = document.querySelector("#leaderboard-table");
+  const tbody = document.querySelector("#leaderboard-table tbody");
+
+  table.style.display = "block";
+
+  sortedArray.forEach(winnerArr => {
+    const tr = document.createElement("tr");
+    const name = document.createElement("td");
+    name.className = "lb-name";
+    const wins = document.createElement("td");
+    wins.className = "lb-wins";
+
+    name.textContent = winnerArr[0];
+    wins.textContent = winnerArr[1];
+
+    tr.appendChild(name);
+    tr.appendChild(wins);
+    tbody.appendChild(tr);
+  });
 }
