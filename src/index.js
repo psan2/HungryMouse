@@ -45,10 +45,6 @@ function fetchGrids() {
     .then(gameData => generateBothGrids(gameData));
 }
 
-// class GridSquare {}
-
-// class Grid {}
-
 function generateBothGrids(gameData) {
   generateRows(gameData, FIRSTGRID);
   generateRows(gameData, SECONDGRID);
