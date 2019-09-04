@@ -7,6 +7,8 @@ Hungry Mouse is a game about finding the opponent's food on a blind board and ea
 
 [Video Demo](https://www.youtube.com/watch?v=q4AXLD7R2Vs)
 
+The Rails-based back end for this project is [here](https://github.com/psan2/hungry-mouse-backend)!
+
 ## Technology
 
 - JavaScript
