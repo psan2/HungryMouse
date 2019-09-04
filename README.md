@@ -1,9 +1,21 @@
+
+
 # HungryMouse
 Hungry Mouse is a game about finding the opponent's food on a blind board and eating it piece by piece! Built in vanilla JavaScript with a Rails backend, compete against the computer player and try to get on the leaderboard.
 
 [Live Site](https://hungrymouse.netlify.com/)
 
 [Video Demo](https://www.youtube.com/watch?v=q4AXLD7R2Vs)
+
+## Technology
+
+- JavaScript
+- Ruby on Rails
+- HTML / CSS
+- PostgreSQL
+- Heroku
+
+## Features
 
 Players begin the game by placing their pieces, in any orientation they like:
 ![HungryMouse cheese placement gif](https://i.imgur.com/iPhdiWn.gif)
