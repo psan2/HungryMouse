@@ -1,4 +1,5 @@
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "https://hungry-mouse-backend.herokuapp.com";
+
 const GAME_URL = `${BASE_URL}/games/1`;
 const BITE_URL = `${BASE_URL}/bite`;
 const MATCH_URL = `${BASE_URL}/matches/2`;
@@ -301,9 +302,7 @@ function renderBites(biteJson) {
 function renderUserBite(userBite) {
   const nibbledFood = userBite.nibbled_food;
   const userBiteSquare = document.querySelector(
-    `#right-grid [data-x_pos='${userBite.x_pos}'][data-y_pos='${
-      userBite.y_pos
-    }']`
+    `#right-grid [data-x_pos='${userBite.x_pos}'][data-y_pos='${userBite.y_pos}']`
   );
   if (userBiteSquare.dataset.nibbled === "true") {
   } else if (nibbledFood) {
@@ -319,9 +318,7 @@ function renderMultComputerBites(computerBites) {
   for (let i = 0; i < computerBites.length; i++) {
     const computerBite = computerBites[i];
     const computerBiteSquare = document.querySelector(
-      `#left-grid [data-x_pos='${computerBite.x_pos}'][data-y_pos='${
-        computerBite.y_pos
-      }']`
+      `#left-grid [data-x_pos='${computerBite.x_pos}'][data-y_pos='${computerBite.y_pos}']`
     );
     computerBiteSquare.className = `${computerBiteSquare.className}-bitten`;
     if (computerBite.won) {
